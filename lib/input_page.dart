@@ -13,6 +13,7 @@ enum CardType { MALE, FEMALE }
 
 class _InputPageState extends State<InputPage> {
   CardType selectedCardType;
+  int height = 180;
 
   Color getCardColor(CardType gender) {
     return gender == selectedCardType ? kActiveCardColor : kInactiveCardColor;
@@ -25,6 +26,7 @@ class _InputPageState extends State<InputPage> {
         title: Text('BMI CALCULATOR'),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Expanded(
             child: Row(
@@ -64,7 +66,30 @@ class _InputPageState extends State<InputPage> {
             child: Row(
               children: <Widget>[
                 Expanded(
-                  child: ReusableCard(),
+                  child: ReusableCard(
+                    cardChild: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'HEIGHT',
+                          style: kLabelTextStyle,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: <Widget>[
+                            Text(height.toString(), style: kValueLabelStyle),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Text('in', style: kLabelTextStyle)
+                          ],
+                        ),
+                        Slider(value: height.toDouble(), min: 120.0, max: 220.0)
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
