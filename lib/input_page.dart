@@ -12,11 +12,35 @@ class InputPage extends StatefulWidget {
 enum CardType { MALE, FEMALE }
 
 class _InputPageState extends State<InputPage> {
-  CardType selectedCardType;
-  int height = 180;
+  CardType selectedCardType = CardType.MALE;
+  int height = 60;
+  int weight = 160;
+  int age = 25;
 
   Color getCardColor(CardType gender) {
     return gender == selectedCardType ? kActiveCardColor : kInactiveCardColor;
+  }
+
+  void handleChanged(double value) {
+    setState(() {
+      height = value.round();
+    });
+  }
+
+  void handleWeightChange(int amount) {
+    if (weight - amount >= 0 && weight + amount < 500) {
+      setState(() {
+        weight += amount;
+      });
+    }
+  }
+
+  void handleAgeChange(int amount) {
+    if (age - amount >= 0 && age + amount < 200) {
+      setState(() {
+        age += amount;
+      });
+    }
   }
 
   @override
@@ -67,6 +91,7 @@ class _InputPageState extends State<InputPage> {
               children: <Widget>[
                 Expanded(
                   child: ReusableCard(
+                    color: kActiveCardColor,
                     cardChild: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
@@ -86,7 +111,24 @@ class _InputPageState extends State<InputPage> {
                             Text('in', style: kLabelTextStyle)
                           ],
                         ),
-                        Slider(value: height.toDouble(), min: 120.0, max: 220.0)
+                        SliderTheme(
+                          data: SliderTheme.of(context).copyWith(
+                              inactiveTrackColor: Color(0xFF8D8E98),
+                              activeTrackColor: Colors.white,
+                              thumbColor: Color(0xFFEB1555),
+                              overlayColor: Color(0x29EB1555),
+                              thumbShape: RoundSliderThumbShape(
+                                enabledThumbRadius: 15,
+                              ),
+                              overlayShape:
+                                  RoundSliderOverlayShape(overlayRadius: 30)),
+                          child: Slider(
+                            onChanged: handleChanged,
+                            value: height.toDouble(),
+                            min: 20.0,
+                            max: 120.0,
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -98,10 +140,72 @@ class _InputPageState extends State<InputPage> {
             child: Row(
               children: <Widget>[
                 Expanded(
-                  child: ReusableCard(),
+                  child: ReusableCard(
+                    cardChild: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'WEIGHT',
+                          style: kLabelTextStyle,
+                        ),
+                        Text(
+                          weight.toString(),
+                          style: kValueLabelStyle,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            RoundIconButton(
+                              onPressed: () => handleWeightChange(-1),
+                              icon: FontAwesomeIcons.minus,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            RoundIconButton(
+                              onPressed: () => handleWeightChange(1),
+                              icon: FontAwesomeIcons.plus,
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                    color: kActiveCardColor,
+                  ),
                 ),
                 Expanded(
-                  child: ReusableCard(),
+                  child: ReusableCard(
+                    color: kActiveCardColor,
+                    cardChild: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'AGE',
+                          style: kLabelTextStyle,
+                        ),
+                        Text(
+                          age.toString(),
+                          style: kValueLabelStyle,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            RoundIconButton(
+                              onPressed: () => handleAgeChange(-1),
+                              icon: FontAwesomeIcons.minus,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            RoundIconButton(
+                              onPressed: () => handleAgeChange(1),
+                              icon: FontAwesomeIcons.plus,
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -114,6 +218,33 @@ class _InputPageState extends State<InputPage> {
           )
         ],
       ),
+    );
+  }
+}
+
+class RoundIconButton extends StatelessWidget {
+  RoundIconButton({this.onPressed, this.child, this.icon}) {}
+
+  final Function onPressed;
+  final Widget child;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    Icon customIcon = Icon(
+      this.icon,
+      color: Colors.white,
+    );
+    return RawMaterialButton(
+      child: this.icon != null ? customIcon : child,
+      onPressed: onPressed != null ? onPressed : () {},
+      constraints: BoxConstraints.tightFor(
+        width: 56.0,
+        height: 56,
+      ),
+      elevation: 2.0,
+      shape: CircleBorder(),
+      fillColor: Color(0xFF4C4F5E),
     );
   }
 }
